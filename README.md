@@ -4,10 +4,6 @@ Aplicación web para la administración de clientes, vehículos, servicios, inve
 
 ## Integrantes
 
-<<<<<<< HEAD
-Gerardo Adonay Flores Rodas FR24012
-Josue Stanley Ruiz Gaitan   RG24040
-=======
 Gerardo Adonay Flores Rodas FR24012  
 César Antonio Castro Aquino CA07001  
 Josue Stanley Ruiz Gaitan   RG24040  
