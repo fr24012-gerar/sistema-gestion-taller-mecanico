@@ -4,5 +4,5 @@ Aplicación web para la administración de clientes, vehículos, servicios, inve
 
 ## Integrantes
 
-Gerardo Adonay Flores Rodas FR24012
-César Antonio Castro Aquino CA07001
+Gerardo Adonay Flores Rodas FR24012  
+César Antonio Castro Aquino CA07001  
