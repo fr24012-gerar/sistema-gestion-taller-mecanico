@@ -8,3 +8,4 @@ Gerardo Adonay Flores Rodas FR24012
 César Antonio Castro Aquino CA07001  
 Josue Stanley Ruiz Gaitan   RG24040  
 Josué Fernando Mata Hernández MH24055  
+Gabriel Enrique Lopez Alvarado LA23024
