@@ -5,3 +5,4 @@ Aplicación web para la administración de clientes, vehículos, servicios, inve
 ## Integrantes
 
 Gerardo Adonay Flores Rodas FR24012
+Josue Stanley Ruiz Gaitan   RG24040
