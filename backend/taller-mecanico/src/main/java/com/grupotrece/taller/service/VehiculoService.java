@@ -1,4 +1,4 @@
-package com.grupotrece.taller.Service;
+package com.grupotrece.taller.service;
 
 import com.grupotrece.taller.dto.VehiculoRequestDTO;
 import com.grupotrece.taller.dto.VehiculoResponseDTO;
@@ -9,4 +9,8 @@ public interface VehiculoService {
     List<VehiculoResponseDTO> listar();
 
     VehiculoResponseDTO guardar(VehiculoRequestDTO dto);
+
+    VehiculoResponseDTO actualizar(long id, VehiculoRequestDTO dto);
+
+    boolean eliminar(long id);
 }
