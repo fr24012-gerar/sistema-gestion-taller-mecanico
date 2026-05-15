@@ -31,6 +31,12 @@ public class VehiculoServiceImpl implements VehiculoService {
     }
 
     @Override
+    public Optional<VehiculoResponseDTO> encontrarPorPlaca(String placa) {
+        return repository.findByPlaca(placa)
+                .map(VehiculoMapper::toResponseDTO);
+    }
+
+    @Override
     public VehiculoResponseDTO guardar(VehiculoRequestDTO dto) {
         Vehiculo guardado = repository.save(VehiculoMapper.toEntity(dto));
 

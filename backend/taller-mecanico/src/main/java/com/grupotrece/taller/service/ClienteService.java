@@ -9,6 +9,8 @@ public interface ClienteService {
 
     List<ClienteResponseDTO> listar();
 
+    Optional<ClienteResponseDTO> encontrarPorEmail(String email);
+
     ClienteResponseDTO guardar(ClienteRequestDTO dto);
 
     ClienteResponseDTO actualizar(long id, ClienteRequestDTO dto);

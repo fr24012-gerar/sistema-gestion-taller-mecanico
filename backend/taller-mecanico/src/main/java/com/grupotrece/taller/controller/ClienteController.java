@@ -31,6 +31,15 @@ public class ClienteController {
     public ResponseEntity<List<ClienteResponseDTO>> listar() {
         return ResponseEntity.ok(clienteService.listar());}
 
+    @GetMapping("/{email}")
+    public ResponseEntity<ClienteResponseDTO> obtenerPorEmail(@PathVariable String email){
+
+        return clienteService.encontrarPorEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+
+    }
+
     // POST
     @PostMapping
     @Operation(

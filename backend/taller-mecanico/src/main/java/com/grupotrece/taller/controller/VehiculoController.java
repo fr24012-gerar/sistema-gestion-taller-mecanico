@@ -40,6 +40,14 @@ public class VehiculoController {
         return ResponseEntity.ok(vehiculoService.listar());
     }
 
+    @GetMapping("/{placa}")
+    public ResponseEntity<VehiculoResponseDTO> encontrarPorPlaca(@PathVariable String placa){
+
+        return vehiculoService.encontrarPorPlaca(placa)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     // POST - guardar
     @PostMapping
     @Operation(summary = "Crear un vehículo")

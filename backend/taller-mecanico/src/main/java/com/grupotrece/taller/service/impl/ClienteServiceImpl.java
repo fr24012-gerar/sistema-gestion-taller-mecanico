@@ -31,6 +31,12 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
+    public Optional<ClienteResponseDTO> encontrarPorEmail(String email) {
+        return repository.findByEmail(email)
+                .map(ClienteMapper::toResponseDto);
+    }
+
+    @Override
     public ClienteResponseDTO guardar(ClienteRequestDTO dto) {
         Cliente guardado = repository.save(ClienteMapper.toEntity(dto));
 
