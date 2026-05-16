@@ -1,23 +1,46 @@
-import { useState } from 'react'
-import Vehicles from './pages/Vehicles'
+import {
+    BrowserRouter,
+    Routes,
+    Route,
+} from "react-router-dom";
 
+import Dashboard from "./pages/Dashboard";
+import Vehicles from "./pages/Vehicles";
+//import Clientes from "./pages/Clientes";
+//import Login from "./pages/Login";
 
 function App() {
 
     return (
 
-        <div>
+        /* ================= ROUTER PRINCIPAL ================= */
+        <BrowserRouter>
 
-            <div>
+            {/* ---------- RUTAS ---------- */}
+            <Routes>
 
-                <Vehicles />
+                {/* HOME / DASHBOARD */}
+                <Route
+                    path="/"
+                    element={<Dashboard />}
+                />
 
-            </div>
+                {/* VEHICULOS */}
+                <Route
+                    path="/vehicles"
+                    element={<Vehicles />}
+                />
 
-        </div>
+        
 
-    )
+            </Routes>
+            {/* ---------- FIN RUTAS ---------- */}
+
+        </BrowserRouter>
+        /* ================= FIN ROUTER ================= */
+
+    );
 
 }
 
-export default App
+export default App;
