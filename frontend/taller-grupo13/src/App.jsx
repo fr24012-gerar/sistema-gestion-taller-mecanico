@@ -6,7 +6,7 @@ import {
 
 import Dashboard from "./pages/Dashboard";
 import Vehicles from "./pages/Vehicles";
-//import Clientes from "./pages/Clientes";
+import Clientes from "./pages/Clientes";
 //import Login from "./pages/Login";
 
 function App() {
@@ -19,10 +19,10 @@ function App() {
             {/* ---------- RUTAS ---------- */}
             <Routes>
 
-                {/* HOME / DASHBOARD */}
+                
                 <Route
                     path="/"
-                    element={<Dashboard />}
+                    element={<Clientes />}
                 />
 
                 {/* VEHICULOS */}
