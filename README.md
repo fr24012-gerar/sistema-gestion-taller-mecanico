@@ -64,7 +64,7 @@ La aplicación cuenta además con una interfaz web desarrollada con **React + Vi
 
 Una vez ejecutado el frontend, puedes acceder desde:
 
-👉 http://localhost:5173/login
+👉 `http://localhost:5173/login`
 
 Desde esta interfaz se pueden gestionar clientes y vehículos mediante una experiencia visual e interactiva.
 
@@ -74,6 +74,54 @@ Desde esta interfaz se pueden gestionar clientes y vehículos mediante una exper
 
 Una vez ejecutado el proyecto, puedes acceder a la documentación en:
 
-👉 http://localhost:8080/swagger-ui/index.html
+👉 `http://localhost:8080/swagger-ui/index.html`
 
 Desde ahí puedes probar todos los endpoints disponibles.
+
+---
+
+## ▶️ Ejecución del proyecto
+
+### Backend
+
+1. Clonar el repositorio  
+2. Configurar la base de datos en `application.properties`  
+3. Ejecutar la aplicación desde la clase principal  
+4. Acceder a Swagger en el navegador  
+
+### Frontend
+
+1. Entrar a la carpeta del frontend  
+
+2. Instalar dependencias:
+
+```bash
+npm install
+```
+
+3. Ejecutar la aplicación:
+
+```bash
+npm run dev
+```
+
+4. Abrir en el navegador:
+
+👉 `http://localhost:5173/login`
+
+---
+
+## 🗄️ Base de datos
+
+El sistema utiliza PostgreSQL.  
+Las tablas se generan automáticamente mediante JPA/Hibernate.
+
+---
+
+## 📌 Notas
+
+- Se implementa arquitectura en capas  
+- Uso de DTOs para evitar exponer entidades directamente  
+- Uso de mappers para conversión de datos  
+- Separación entre frontend y backend  
+- Frontend desarrollado como SPA utilizando React + Vite
