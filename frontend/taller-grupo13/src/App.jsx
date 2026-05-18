@@ -2,45 +2,70 @@ import {
     BrowserRouter,
     Routes,
     Route,
+    Navigate
 } from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard";
 import Vehicles from "./pages/Vehicles";
 import Clientes from "./pages/Clientes";
-//import Login from "./pages/Login";
+import Login from "./pages/Login";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
 
     return (
 
-        /* ================= ROUTER PRINCIPAL ================= */
         <BrowserRouter>
 
-            {/* ---------- RUTAS ---------- */}
             <Routes>
 
-                
+                {/* LOGIN */}
                 <Route
-                    path="/"
-                    element={<Clientes />}
+                    path="/login"
+                    element={<Login />}
+                />
+
+                {/* DASHBOARD */}
+                <Route
+                    path="/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* CLIENTES */}
+                <Route
+                    path="/clientes"
+                    element={
+                        <ProtectedRoute>
+                            <Clientes />
+                        </ProtectedRoute>
+                    }
                 />
 
                 {/* VEHICULOS */}
                 <Route
-                    path="/vehicles"
-                    element={<Vehicles />}
+                    path="/vehiculos"
+                    element={
+                        <ProtectedRoute>
+                            <Vehicles />
+                        </ProtectedRoute>
+                    }
                 />
 
-        
+                {/* DEFAULT */}
+                <Route
+                    path="*"
+                    element={<Navigate to="/login" />}
+                />
 
             </Routes>
-            {/* ---------- FIN RUTAS ---------- */}
 
         </BrowserRouter>
-        /* ================= FIN ROUTER ================= */
-
     );
-
 }
 
 export default App;
