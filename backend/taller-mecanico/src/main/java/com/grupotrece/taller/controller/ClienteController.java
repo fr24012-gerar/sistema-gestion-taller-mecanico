@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/clientes")
+@CrossOrigin(origins = "http://localhost:5173")
 @Tag(name = "Clientes", description = "Gestión de clientes del taller mecánico")
 public class ClienteController {
 

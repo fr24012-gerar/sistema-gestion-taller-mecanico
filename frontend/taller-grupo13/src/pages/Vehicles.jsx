@@ -1,520 +1,454 @@
-import {
-  FaCar,
-  FaPlus,
-  FaSearch,
-  FaTrash,
-  FaEdit,
-} from "react-icons/fa";
-
+import { useState, useEffect } from "react";
+import { FaCar, FaPlus, FaSearch, FaTrash, FaEdit, FaTimes, FaSave } from "react-icons/fa";
 import Sidebar from "../components/Sidebar";
+import { listarVehiculos, crearVehiculo, actualizarVehiculo, eliminarVehiculo } from "../services/vehiculoService";
+
+const FORM_VACIO = { marca: "", modelo: "", placa: "", clienteId: "" };
 
 function Vehiculos() {
+  const [vehiculos,      setVehiculos]      = useState([]);
+  const [loading,        setLoading]        = useState(true);
+  const [error,          setError]          = useState("");
+  const [busqueda,       setBusqueda]       = useState("");
+  const [modalAbierto,   setModalAbierto]   = useState(false);
+  const [modoEditar,     setModoEditar]     = useState(false);
+  const [idEditando,     setIdEditando]     = useState(null);
+  const [form,           setForm]           = useState(FORM_VACIO);
+  const [loadingGuardar, setLoadingGuardar] = useState(false);
+  const [errorModal,     setErrorModal]     = useState("");
+  const [confirmId,      setConfirmId]      = useState(null);
+
+  // Estado para controlar el ancho de la pantalla y aplicar responsividad dinámica
+  const [anchoPantalla, setAnchoPantalla] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
+
+  useEffect(() => {
+    const handleResize = () => setAnchoPantalla(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const esMovil = anchoPantalla < 768;
+  const esTablet = anchoPantalla < 1024;
 
   // =========================
-  // DATOS TEMPORALES
+  // CARGAR
   // =========================
-  const vehiculos = [
-
-    {
-      id: 1,
-      marca: "Toyota",
-      modelo: "Corolla",
-      placa: "P-123456",
-      anio: 2019,
-      propietario: "Carlos Morales",
-      estado: "En orden",
-      clienteId: 1,
-    },
-
-    {
-      id: 2,
-      marca: "Honda",
-      modelo: "Civic",
-      placa: "P-654321",
-      anio: 2021,
-      propietario: "Laura Rivas",
-      estado: "En servicio",
-      clienteId: 2,
-    },
-
-    {
-      id: 3,
-      marca: "Nissan",
-      modelo: "Sentra",
-      placa: "P-789012",
-      anio: 2018,
-      propietario: "José Mejía",
-      estado: "Pendiente",
-      clienteId: 3,
-    },
-
-  ];
-
-  // =========================
-  // ESTILOS DE ESTADO
-  // =========================
-  const obtenerColorEstado = (estado) => {
-
-    if (estado === "En orden") {
-
-      return {
-        background: "#d8f7dd",
-        color: "#35a853",
-      };
-
+  const cargar = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      setVehiculos(await listarVehiculos());
+    } catch {
+      setError("No se pudo conectar con el servidor.");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    if (estado === "En servicio") {
+  useEffect(() => { cargar(); }, []);
 
-      return {
-        background: "#f8e7d4",
-        color: "#ff7a00",
-      };
+  // =========================
+  // FILTRO
+  // =========================
+  const filtrados = vehiculos.filter((v) =>
+    `${v.marca} ${v.modelo} ${v.placa}`
+      .toLowerCase()
+      .includes(busqueda.toLowerCase())
+  );
 
-    }
+  // =========================
+  // HANDLERS FORM
+  // =========================
+  const handleChange = (e) =>
+    setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
-    return {
-      background: "#ffd9d9",
-      color: "#ff4d4d",
-    };
+  const abrirCrear = () => {
+    setForm(FORM_VACIO);
+    setModoEditar(false);
+    setIdEditando(null);
+    setErrorModal("");
+    setModalAbierto(true);
+  };
 
+  const abrirEditar = (v) => {
+    setForm({
+      marca:     v.marca     || "",
+      modelo:    v.modelo    || "",
+      placa:     v.placa     || "",
+      clienteId: v.clienteId || "",
+    });
+    setModoEditar(true);
+    setIdEditando(v.id);
+    setErrorModal("");
+    setModalAbierto(true);
+  };
+
+  const cerrarModal = () => {
+    setModalAbierto(false);
+    setErrorModal("");
   };
 
   // =========================
-  // RETURN
+  // GUARDAR
+  // =========================
+  const handleGuardar = async () => {
+    if (!form.marca.trim() || !form.placa.trim()) {
+      setErrorModal("Marca y placa son obligatorios.");
+      return;
+    }
+
+    setLoadingGuardar(true);
+    setErrorModal("");
+
+    try {
+      const dto = {
+        ...form,
+        clienteId: form.clienteId === "" ? null : Number(form.clienteId)
+      };
+      
+      modoEditar
+        ? await actualizarVehiculo(idEditando, dto)
+        : await crearVehiculo(dto);
+
+      await cargar();
+      cerrarModal();
+    } catch (err) {
+      setErrorModal(err.message || "Error al guardar.");
+    } finally {
+      setLoadingGuardar(false);
+    }
+  };
+
+  // =========================
+  // ELIMINAR
+  // =========================
+  const handleEliminar = async (id) => {
+    try {
+      await eliminarVehiculo(id);
+      setVehiculos((prev) => prev.filter((v) => v.id !== id));
+    } catch {
+      setError("No se pudo eliminar el vehículo.");
+    }
+    setConfirmId(null);
+  };
+
+  const hoverUp    = (e) => { if (!esMovil) e.currentTarget.style.transform = "translateY(-3px)"; };
+  const hoverLeave = (e) => { if (!esMovil) e.currentTarget.style.transform = "translateY(0px)";  };
+
+  // =========================
+  // RENDER
   // =========================
   return (
+    <div style={{ 
+      display: "flex", 
+      flexDirection: esTablet ? "column" : "row", // Sidebar arriba/oculto en pantallas chicas si aplica
+      minHeight: "100vh", 
+      backgroundColor: "#0f0f0f", 
+      color: "white", 
+      fontFamily: "Arial" 
+    }}>
 
-    <div
-      style={{
-        display: "flex",
-        minHeight: "100vh",
-        backgroundColor: "#0f0f0f",
-        color: "white",
-        fontFamily: "Arial",
-      }}
-    >
-
-      {/* SIDEBAR */}
       <Sidebar />
 
-      {/* CONTENIDO */}
-      <main
-        style={{
-          flex: 1,
-          padding: "40px",
-        }}
-      >
+      <main style={{ 
+        flex: 1, 
+        padding: esMovil ? "20px 15px" : "40px",
+        width: "100%",
+        boxSizing: "border-box"
+      }}>
 
         {/* HEADER */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "40px",
-          }}
-        >
-
+        <div style={{ 
+          display: "flex", 
+          flexDirection: esMovil ? "column" : "row", 
+          justifyContent: "space-between", 
+          alignItems: esMovil ? "stretch" : "center", 
+          gap: "20px",
+          marginBottom: "40px" 
+        }}>
           <div>
-
-            <h1
-              style={{
-                fontSize: "52px",
-                fontWeight: "bold",
-                marginBottom: "10px",
-              }}
-            >
+            <h1 style={{ fontSize: esMovil ? "30px" : "40px", fontWeight: "bold", marginBottom: "8px" }}>
               Gestión de vehículos
             </h1>
-
-            <p
-              style={{
-                color: "#9c9c9c",
-                fontSize: "18px",
-              }}
-            >
+            <p style={{ color: "#9c9c9c" }}>
               Administra los vehículos del taller
             </p>
-
           </div>
 
           {/* BUSCADOR */}
-          <div
-            style={{
-              width: "320px",
-              backgroundColor: "#1b1b1b",
-              borderRadius: "16px",
-              padding: "14px 18px",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-            }}
-          >
-
+          <div style={{ 
+            width: esMovil ? "100%" : "300px", 
+            backgroundColor: "#1b1b1b", 
+            borderRadius: "16px", 
+            padding: "12px 18px", 
+            display: "flex", 
+            alignItems: "center", 
+            gap: "10px",
+            boxSizing: "border-box"
+          }}>
             <FaSearch color="#9c9c9c" />
-
             <input
               type="text"
-              placeholder="Buscar vehículo..."
-              style={{
-                background: "transparent",
-                border: "none",
-                outline: "none",
-                color: "white",
-                width: "100%",
-                fontSize: "15px",
-              }}
+              placeholder="Buscar por marca, modelo..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              style={{ background: "transparent", border: "none", outline: "none", color: "white", width: "100%", fontSize: "15px" }}
             />
-
           </div>
-
         </div>
 
-        {/* CARDS */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3,1fr)",
-            gap: "20px",
-            marginBottom: "35px",
-          }}
-        >
-
-          {/* CARD 1 */}
-          <div
-            style={{
-              background: "linear-gradient(to right, #262626, #333333)",
-              borderRadius: "24px",
-              padding: "25px",
-            }}
-          >
-
-            <div
-              style={{
-                width: "60px",
-                height: "60px",
-                borderRadius: "18px",
-                backgroundColor: "#d9ecff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "24px",
-                color: "#2d7bd8",
-                marginBottom: "18px",
-              }}
-            >
-
-              <FaCar />
-
-            </div>
-
-            <p style={{ color: "#b3b3b3" }}>
-              Total vehículos
-            </p>
-
-            <h2
-              style={{
-                fontSize: "42px",
-                marginTop: "10px",
-              }}
-            >
-              74
-            </h2>
-
+        {/* ERROR GLOBAL */}
+        {error && (
+          <div style={{ background: "#ffd9d9", color: "#ff4d4d", padding: "12px 18px", borderRadius: "12px", marginBottom: "24px", fontSize: "14px" }}>
+            单元 {error}
           </div>
+        )}
 
-          {/* CARD 2 */}
-          <div
-            style={{
-              background: "linear-gradient(to right, #262626, #333333)",
-              borderRadius: "24px",
-              padding: "25px",
-            }}
-          >
-
-            <div
-              style={{
-                width: "60px",
-                height: "60px",
-                borderRadius: "18px",
-                backgroundColor: "#d8f7dd",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "24px",
-                color: "#35a853",
-                marginBottom: "18px",
-              }}
-            >
-
-              <FaCar />
-
+        {/* STATS */}
+        <div style={{ 
+          display: "grid", 
+          gridTemplateColumns: esMovil ? "1fr" : "repeat(2, 1fr)", 
+          gap: "20px", 
+          marginBottom: "30px" 
+        }}>
+          {[
+            { label: "Total vehículos", value: vehiculos.length, bg: "#d9ecff", color: "#2d7bd8" },
+            { label: "Resultados",      value: filtrados.length, bg: "#d8f7dd", color: "#35a853" },
+          ].map((c) => (
+            <div key={c.label} style={{ background: "linear-gradient(to right,#262626,#333333)", borderRadius: "24px", padding: "20px", display: "flex", alignItems: "center", gap: "18px" }}>
+              <div style={{ width: "50px", height: "50px", borderRadius: "16px", backgroundColor: c.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", color: c.color, flexShrink: 0 }}>
+                <FaCar />
+              </div>
+              <div>
+                <p style={{ color: "#b3b3b3", fontSize: "14px", margin: 0 }}>{c.label}</p>
+                <h2 style={{ fontSize: esMovil ? "28px" : "36px", margin: "4px 0 0 0" }}>{c.value}</h2>
+              </div>
             </div>
-
-            <p style={{ color: "#b3b3b3" }}>
-              En orden
-            </p>
-
-            <h2
-              style={{
-                fontSize: "42px",
-                marginTop: "10px",
-              }}
-            >
-              51
-            </h2>
-
-          </div>
-
-          {/* CARD 3 */}
-          <div
-            style={{
-              background: "linear-gradient(to right, #262626, #333333)",
-              borderRadius: "24px",
-              padding: "25px",
-            }}
-          >
-
-            <div
-              style={{
-                width: "60px",
-                height: "60px",
-                borderRadius: "18px",
-                backgroundColor: "#f8e7d4",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "24px",
-                color: "#ff7a00",
-                marginBottom: "18px",
-              }}
-            >
-
-              <FaCar />
-
-            </div>
-
-            <p style={{ color: "#b3b3b3" }}>
-              En servicio
-            </p>
-
-            <h2
-              style={{
-                fontSize: "42px",
-                marginTop: "10px",
-              }}
-            >
-              18
-            </h2>
-
-          </div>
-
+          ))}
         </div>
 
-        {/* BOTON */}
+        {/* BOTÓN NUEVO */}
         <button
-          style={{
-            backgroundColor: "#ff6b00",
-            border: "none",
-            padding: "16px 24px",
-            borderRadius: "16px",
-            color: "white",
-            fontSize: "16px",
-            fontWeight: "bold",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            marginBottom: "30px",
-          }}
+          onClick={abrirCrear}
+          onMouseEnter={hoverUp}
+          onMouseLeave={hoverLeave}
+          style={{ backgroundColor: "#ff6b00", border: "none", padding: "14px 22px", borderRadius: "14px", color: "white", fontSize: "15px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: esMovil ? "center" : "flex-start", width: esMovil ? "100%" : "auto", gap: "10px", marginBottom: "28px", transition: "0.2s" }}
         >
-
-          <FaPlus />
-
-          Nuevo vehículo
-
+          <FaPlus /> Nuevo vehículo
         </button>
 
-        {/* TABLA */}
-        <div
-          style={{
-            background: "linear-gradient(to right, #262626, #333333)",
-            borderRadius: "24px",
-            overflow: "hidden",
-          }}
-        >
+        {/* TABLA / CONTENEDOR RESPONSIVE */}
+        <div style={{ background: "linear-gradient(to right,#262626,#333333)", borderRadius: "24px", overflow: "hidden" }}>
+          
+          {/* ENCABEZADO - Solo visible en Escritorio */}
+          {!esMovil && (
+            <div style={{ display: "grid", gridTemplateColumns: "2fr 1.5fr 1.5fr 1fr 100px", padding: "20px 22px", color: "#b3b3b3", fontWeight: "bold", borderBottom: "1px solid rgba(255,255,255,0.08)", fontSize: "13px" }}>
+              <span>MARCA</span>
+              <span>MODELO</span>
+              <span>PLACA</span>
+              <span>ID CLIENTE</span>
+              <span style={{ textAlign: "right" }}>ACCIONES</span>
+            </div>
+          )}
 
-          {/* HEADER TABLA */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "2fr 1.2fr 1fr 1.5fr 1.2fr 1fr",
-              padding: "22px",
-              color: "#b3b3b3",
-              fontWeight: "bold",
-              borderBottom:
-                "1px solid rgba(255,255,255,0.08)",
-            }}
-          >
+          {/* LOADING */}
+          {loading && (
+            <div style={{ padding: "40px", textAlign: "center", color: "#9c9c9c" }}>
+              Cargando vehículos...
+            </div>
+          )}
 
-            <span>Vehículo</span>
-            <span>Placa</span>
-            <span>Año</span>
-            <span>Propietario</span>
-            <span>Estado</span>
-            <span>Acciones</span>
+          {/* VACÍO */}
+          {!loading && filtrados.length === 0 && (
+            <div style={{ padding: "40px", textAlign: "center", color: "#9c9c9c" }}>
+              {busqueda ? "Sin resultados para tu búsqueda." : "No hay vehículos registrados."}
+            </div>
+          )}
 
-          </div>
-
-          {/* FILAS */}
-          {vehiculos.map((vehiculo) => (
-
+          {/* FILAS (Formato Grid en PC, Formato Tarjeta en Móvil) */}
+          {!loading && filtrados.map((v) => (
             <div
-              key={vehiculo.id}
-              style={{
+              key={v.id}
+              style={esMovil ? {
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px",
+                padding: "20px",
+                borderBottom: "1px solid rgba(255,255,255,0.08)"
+              } : {
                 display: "grid",
-                gridTemplateColumns:
-                  "2fr 1.2fr 1fr 1.5fr 1.2fr 1fr",
-                padding: "22px",
+                gridTemplateColumns: "2fr 1.5fr 1.5fr 1fr 100px",
+                padding: "18px 22px",
                 alignItems: "center",
-                borderBottom:
-                  "1px solid rgba(255,255,255,0.08)",
+                borderBottom: "1px solid rgba(255,255,255,0.06)"
               }}
             >
-
-              {/* VEHICULO */}
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "15px",
-                }}
-              >
-
-                <div
-                  style={{
-                    width: "52px",
-                    height: "52px",
-                    borderRadius: "16px",
-                    backgroundColor: "#d9ecff",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#2d7bd8",
-                    fontSize: "22px",
-                  }}
-                >
-
+              {/* MARCA */}
+              <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                <div style={{ width: "40px", height: "40px", borderRadius: "12px", backgroundColor: "#d9ecff", display: "flex", alignItems: "center", justifyContent: "center", color: "#2d7bd8", fontSize: "18px", flexShrink: 0 }}>
                   <FaCar />
-
                 </div>
-
                 <div>
-
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontSize: "16px",
-                    }}
-                  >
-                    {vehiculo.marca} {vehiculo.modelo}
-                  </h3>
-
+                  {esMovil && <span style={{ fontSize: "10px", color: "#ff6b00", display: "block", fontWeight: "bold" }}>MARCA</span>}
+                  <strong style={{ fontSize: "16px" }}>{v.marca}</strong>
                 </div>
+              </div>
 
+              {/* MODELO */}
+              <div>
+                {esMovil && <span style={{ fontSize: "10px", color: "#9c9c9c", display: "block", marginBottom: "2px" }}>MODELO</span>}
+                <span style={{ color: "#b3b3b3" }}>{v.modelo || "—"}</span>
               </div>
 
               {/* PLACA */}
-              <span>{vehiculo.placa}</span>
-
-              {/* AÑO */}
-              <span>{vehiculo.anio}</span>
-
-              {/* PROPIETARIO */}
-              <span>{vehiculo.propietario}</span>
-
-              {/* ESTADO */}
               <div>
-
-                <span
-                  style={{
-                    padding: "10px 16px",
-                    borderRadius: "999px",
-                    fontSize: "14px",
-                    fontWeight: "bold",
-
-                    ...obtenerColorEstado(
-                      vehiculo.estado
-                    ),
-                  }}
-                >
-
-                  {vehiculo.estado}
-
+                {esMovil && <span style={{ fontSize: "10px", color: "#9c9c9c", display: "block", marginBottom: "4px" }}>PLACA</span>}
+                <span style={{ background: "#1b1b1b", padding: "4px 10px", borderRadius: "8px", fontSize: "13px", fontFamily: "monospace", display: "inline-block" }}>
+                  {v.placa}
                 </span>
+              </div>
 
+              {/* ID CLIENTE */}
+              <div>
+                {esMovil && <span style={{ fontSize: "10px", color: "#9c9c9c", display: "block", marginBottom: "2px" }}>ID CLIENTE</span>}
+                <span style={{ color: "#b3b3b3", paddingLeft: esMovil ? "0" : "25px" }}>
+                  {v.clienteId ?? "—"}
+                </span>
               </div>
 
               {/* ACCIONES */}
-              <div
-                style={{
-                  display: "flex",
-                  gap: "10px",
-                }}
-              >
-
-                {/* EDITAR */}
+              <div style={{ 
+                display: "flex", 
+                gap: "10px", 
+                justifyContent: esMovil ? "flex-end" : "flex-end",
+                marginTop: esMovil ? "10px" : "0",
+                borderTop: esMovil ? "1px solid rgba(255,255,255,0.05)" : "none",
+                paddingTop: esMovil ? "12px" : "0"
+              }}>
                 <button
-                  style={{
-                    width: "42px",
-                    height: "42px",
-                    borderRadius: "12px",
-                    border: "none",
-                    backgroundColor: "#d9ecff",
-                    color: "#2d7bd8",
-                    cursor: "pointer",
-                    fontSize: "16px",
-                  }}
+                  onClick={() => abrirEditar(v)}
+                  title="Editar"
+                  style={{ width: "40px", height: "40px", borderRadius: "12px", border: "none", backgroundColor: "#d9ecff", color: "#2d7bd8", cursor: "pointer", fontSize: "15px", display: "flex", alignItems: "center", justifyContent: "center" }}
                 >
-
                   <FaEdit />
-
                 </button>
-
-                {/* ELIMINAR */}
                 <button
-                  style={{
-                    width: "42px",
-                    height: "42px",
-                    borderRadius: "12px",
-                    border: "none",
-                    backgroundColor: "#ffd9d9",
-                    color: "#ff4d4d",
-                    cursor: "pointer",
-                    fontSize: "16px",
-                  }}
+                  onClick={() => setConfirmId(v.id)}
+                  title="Eliminar"
+                  style={{ width: "40px", height: "40px", borderRadius: "12px", border: "none", backgroundColor: "#ffd9d9", color: "#ff4d4d", cursor: "pointer", fontSize: "15px", display: "flex", alignItems: "center", justifyContent: "center" }}
                 >
-
                   <FaTrash />
-
                 </button>
-
               </div>
 
             </div>
-
           ))}
-
         </div>
-
       </main>
 
+      {/* MODAL CREAR / EDITAR */}
+      {modalAbierto && (
+        <div
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: "15px" }}
+          onClick={cerrarModal}
+        >
+          <div
+            style={{ background: "#1b1b1b", borderRadius: "24px", padding: esMovil ? "24px" : "32px", width: "440px", maxWidth: "100%", boxSizing: "border-box" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header modal */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "#d9ecff", color: "#2d7bd8", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <FaCar />
+                </div>
+                <div>
+                  <div style={{ fontWeight: "bold", fontSize: "15px" }}>
+                    {modoEditar ? "Editar vehículo" : "Nuevo vehículo"}
+                  </div>
+                  <div style={{ fontSize: "11px", color: "#6b7280" }}>
+                    {modoEditar ? `PUT /vehiculos/${idEditando}` : "POST /vehiculos"}
+                  </div>
+                </div>
+              </div>
+              <button onClick={cerrarModal} style={{ background: "none", border: "none", color: "#9c9c9c", fontSize: "20px", cursor: "pointer" }}>
+                <FaTimes />
+              </button>
+            </div>
+
+            {errorModal && (
+              <div style={{ background: "#ffd9d9", color: "#ff4d4d", padding: "10px 14px", borderRadius: "10px", marginBottom: "16px", fontSize: "13px" }}>
+                ⚠ {errorModal}
+              </div>
+            )}
+
+            {/* Campos adaptables a 1 columna en móvil */}
+            <div style={{ display: "grid", gridTemplateColumns: esMovil ? "1fr" : "1fr 1fr", gap: "14px" }}>
+              {[
+                { name: "marca",     label: "Marca *",    placeholder: "Toyota"   },
+                { name: "modelo",    label: "Modelo",     placeholder: "Corolla"  },
+                { name: "placa",     label: "Placa *",    placeholder: "P-123456" },
+                { name: "clienteId", label: "ID Cliente", placeholder: "1", type: "number" },
+              ].map((campo) => (
+                <div key={campo.name}>
+                  <label style={{ fontSize: "12px", color: "#9c9c9c", display: "block", marginBottom: "6px" }}>
+                    {campo.label}
+                  </label>
+                  <input
+                    name={campo.name}
+                    type={campo.type || "text"}
+                    placeholder={campo.placeholder}
+                    value={form[campo.name]}
+                    onChange={handleChange}
+                    style={{ width: "100%", background: "#262626", border: "1px solid #374151", borderRadius: "10px", padding: "11px 12px", color: "white", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Footer modal */}
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "28px" }}>
+              <button onClick={cerrarModal} style={{ background: "none", border: "1px solid #374151", color: "#9c9c9c", padding: "10px 18px", borderRadius: "10px", cursor: "pointer", fontSize: "13px" }}>
+                Cancelar
+              </button>
+              <button
+                onClick={handleGuardar}
+                disabled={loadingGuardar}
+                style={{ background: "#ff6b00", border: "none", color: "white", padding: "10px 20px", borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: "bold", display: "flex", alignItems: "center", gap: "8px", opacity: loadingGuardar ? 0.6 : 1 }}
+              >
+                {loadingGuardar ? "Guardando..." : <><FaSave /> {modoEditar ? "Actualizar" : "Registrar"}</>}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL CONFIRMAR ELIMINAR */}
+      {confirmId !== null && (
+        <div
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: "15px" }}
+          onClick={() => setConfirmId(null)}
+        >
+          <div style={{ background: "#1b1b1b", borderRadius: "24px", padding: "32px", width: "340px", maxWidth: "100%", boxSizing: "border-box", textAlign: "center" }}>
+            <div style={{ fontSize: "40px", marginBottom: "12px" }}>⚠️</div>
+            <h3 style={{ marginBottom: "10px" }}>¿Eliminar vehículo?</h3>
+            <p style={{ color: "#9c9c9c", fontSize: "14px", marginBottom: "24px" }}>
+              Esta acción es permanente y no se puede deshacer.
+            </p>
+            <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+              <button onClick={() => setConfirmId(null)} style={{ background: "none", border: "1px solid #374151", color: "#9c9c9c", padding: "10px 20px", borderRadius: "12px", cursor: "pointer" }}>
+                Cancelar
+              </button>
+              <button onClick={() => handleEliminar(confirmId)} style={{ background: "#ff4d4d", border: "none", color: "white", padding: "10px 20px", borderRadius: "12px", cursor: "pointer", fontWeight: "bold" }}>
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
-
   );
-
 }
 
 export default Vehiculos;

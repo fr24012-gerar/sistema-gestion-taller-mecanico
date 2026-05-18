@@ -1,12 +1,24 @@
+import { useNavigate } from "react-router-dom" 
 import {
   FaUsers,
   FaCar,
   FaClipboardList,
   FaCog,
   FaBars,
+   FaSignOutAlt
 } from "react-icons/fa";
+import Sidebar from "../components/Sidebar"
 
 function Dashboard() {
+
+  const navigate = useNavigate()
+
+  const cerrarSesion = () => {
+
+    localStorage.removeItem("usuario");
+
+    navigate("/login");
+  };
 
   // =========================
   // EFECTOS HOVER
@@ -37,132 +49,7 @@ function Dashboard() {
       }}
     >
 
-      {/* ===================================== */}
-      {/* SIDEBAR */}
-      {/* ===================================== */}
-      <aside
-        style={{
-          width: "90px",
-          background: "linear-gradient(to bottom, #071028, #0a1633)",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "20px 0",
-        }}
-      >
-
-        {/* LOGO */}
-        <div
-          onMouseEnter={hoverUp}
-          onMouseLeave={hoverLeave}
-          style={{
-            width: "50px",
-            height: "50px",
-            backgroundColor: "#ff6b00",
-            borderRadius: "14px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            fontSize: "20px",
-            cursor: "pointer",
-            transition: "0.3s",
-          }}
-        >
-          <FaBars />
-        </div>
-
-        {/* ICONOS */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "25px",
-          }}
-        >
-
-          {/* ICONO USUARIOS */}
-          <div
-            onMouseEnter={hoverUp}
-            onMouseLeave={hoverLeave}
-            style={{
-              width: "50px",
-              height: "50px",
-              borderRadius: "14px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "rgba(255,255,255,0.12)",
-              color: "white",
-              cursor: "pointer",
-              transition: "0.3s",
-            }}
-          >
-            <FaUsers />
-          </div>
-
-          {/* ICONO VEHICULOS */}
-          <div
-            onMouseEnter={hoverUp}
-            onMouseLeave={hoverLeave}
-            style={{
-              width: "50px",
-              height: "50px",
-              borderRadius: "14px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              color: "#bdbdbd",
-              cursor: "pointer",
-              transition: "0.3s",
-            }}
-          >
-            <FaCar />
-          </div>
-
-          {/* ICONO ORDENES */}
-          <div
-            onMouseEnter={hoverUp}
-            onMouseLeave={hoverLeave}
-            style={{
-              width: "50px",
-              height: "50px",
-              borderRadius: "14px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              color: "#bdbdbd",
-              cursor: "pointer",
-              transition: "0.3s",
-            }}
-          >
-            <FaClipboardList />
-          </div>
-
-        </div>
-        {/* FIN ICONOS */}
-
-        {/* SETTINGS */}
-        <div
-          onMouseEnter={hoverUp}
-          onMouseLeave={hoverLeave}
-          style={{
-            width: "50px",
-            height: "50px",
-            borderRadius: "14px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            color: "#bdbdbd",
-            cursor: "pointer",
-            transition: "0.3s",
-          }}
-        >
-          <FaCog />
-        </div>
-
-      </aside>
-      {/* FIN SIDEBAR */}
+      <Sidebar />
 
       {/* ===================================== */}
       {/* MAIN */}
@@ -191,7 +78,7 @@ function Dashboard() {
           {/* TITULO */}
           <div>
 
-            <h2 style={{ fontSize: "28px" }}>
+            <h2 style={{ fontWeight: "bold", fontSize: "28px" }}>
               Panel principal
             </h2>
 
@@ -203,40 +90,74 @@ function Dashboard() {
 
           {/* ADMIN */}
           <div
-            onMouseEnter={hoverUp}
-            onMouseLeave={hoverLeave}
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "12px",
-              backgroundColor: "#1b1b1b",
-              padding: "10px 16px",
-              borderRadius: "30px",
-              transition: "0.3s",
-              cursor: "pointer",
+              gap: "14px",
             }}
           >
 
-            {/* AVATAR */}
+            {/* PERFIL */}
             <div
+              onMouseEnter={hoverUp}
+              onMouseLeave={hoverLeave}
               style={{
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                backgroundColor: "#d9d9ff",
-                color: "black",
                 display: "flex",
-                justifyContent: "center",
                 alignItems: "center",
-                fontWeight: "bold",
+                gap: "12px",
+                backgroundColor: "#1b1b1b",
+                padding: "10px 16px",
+                borderRadius: "30px",
+                transition: "0.3s",
+                cursor: "pointer",
               }}
             >
-              AD
+
+              {/* AVATAR */}
+              <div
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  backgroundColor: "#d9d9ff",
+                  color: "black",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                AD
+              </div>
+
+              <span>
+                Administrador
+              </span>
+
             </div>
 
-            <span>
-              Administrador
-            </span>
+            {/* BOTON CERRAR SESION */}
+            <button
+              onClick={cerrarSesion}
+              onMouseEnter={hoverUp}
+              onMouseLeave={hoverLeave}
+              style={{
+                width: "48px",
+                height: "48px",
+                borderRadius: "16px",
+                border: "none",
+                backgroundColor: "#ff4d4d",
+                color: "white",
+                cursor: "pointer",
+                fontSize: "18px",
+                transition: "0.3s",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <FaSignOutAlt />
+            </button>
 
           </div>
           {/* FIN ADMIN */}
@@ -249,7 +170,7 @@ function Dashboard() {
         {/* ===================================== */}
         <div>
 
-          <h1 style={{ fontSize: "40px" }}>
+          <h1 style={{ fontWeight: "bold", fontSize: "40px" }}>
             Bienvenido, Administrador
           </h1>
 
@@ -280,6 +201,7 @@ function Dashboard() {
 
           {/* CARD CLIENTES */}
           <div
+            onClick={() => navigate("/clientes")}
             onMouseEnter={hoverUp}
             onMouseLeave={hoverLeave}
             style={{
@@ -319,6 +241,7 @@ function Dashboard() {
 
           {/* CARD VEHICULOS */}
           <div
+            onClick={() => navigate("/vehiculos")}
             onMouseEnter={hoverUp}
             onMouseLeave={hoverLeave}
             style={{

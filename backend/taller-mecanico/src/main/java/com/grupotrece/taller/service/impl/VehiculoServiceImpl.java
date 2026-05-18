@@ -2,11 +2,14 @@ package com.grupotrece.taller.service.impl;
 
 import com.grupotrece.taller.dto.VehiculoRequestDTO;
 import com.grupotrece.taller.dto.VehiculoResponseDTO;
+import com.grupotrece.taller.entity.Cliente;
 import com.grupotrece.taller.entity.Vehiculo;
 import com.grupotrece.taller.mapper.VehiculoMapper;
+import com.grupotrece.taller.repository.ClienteRepository;
 import com.grupotrece.taller.repository.VehiculoRepository;
 import com.grupotrece.taller.service.VehiculoService;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,13 +17,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class VehiculoServiceImpl implements VehiculoService {
 
     private final VehiculoRepository repository;
-
-    public VehiculoServiceImpl(VehiculoRepository repository) {
-        this.repository = repository;
-    }
+    private final ClienteRepository clienteRepository;
 
     @Override
     public List<VehiculoResponseDTO> listar() {
@@ -38,7 +39,11 @@ public class VehiculoServiceImpl implements VehiculoService {
 
     @Override
     public VehiculoResponseDTO guardar(VehiculoRequestDTO dto) {
-        Vehiculo guardado = repository.save(VehiculoMapper.toEntity(dto));
+        Cliente cliente = clienteRepository.findById(dto.getClienteId())
+                .orElseThrow(() ->
+                        new RuntimeException("Cliente con id: " + dto.getClienteId() + " no existe"));
+
+        Vehiculo guardado = repository.save(VehiculoMapper.toEntity(dto, cliente));
 
         return VehiculoMapper.toResponseDTO(guardado);
     }
