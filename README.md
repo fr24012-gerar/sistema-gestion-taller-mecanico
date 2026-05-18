@@ -18,12 +18,19 @@ En esta etapa del proyecto se ha implementado la gestión de **clientes** y **ve
 
 ## ⚙️ Tecnologías utilizadas
 
+### Backend
 - Java 21  
 - Spring Boot  
 - Spring Data JPA  
 - PostgreSQL  
 - Lombok  
 - Swagger (OpenAPI)  
+
+### Frontend
+- React  
+- Vite  
+- Bootstrap  
+- React Router DOM  
 
 ---
 
@@ -46,6 +53,20 @@ El sistema está estructurado en capas:
 - CRUD de vehículos  
 - Relación entre cliente y vehículo  
 - Uso de DTOs y mappers  
+- Interfaz gráfica desarrollada con React + Vite  
+- Navegación entre vistas mediante React Router  
+
+---
+
+## 🖥️ Interfaz de Usuario (Frontend)
+
+La aplicación cuenta además con una interfaz web desarrollada con **React + Vite**.
+
+Una vez ejecutado el frontend, puedes acceder desde:
+
+👉 http://localhost:5173/login
+
+Desde esta interfaz se pueden gestionar clientes y vehículos mediante una experiencia visual e interactiva.
 
 ---
 
@@ -56,27 +77,3 @@ Una vez ejecutado el proyecto, puedes acceder a la documentación en:
 👉 http://localhost:8080/swagger-ui/index.html
 
 Desde ahí puedes probar todos los endpoints disponibles.
-
----
-
-## ▶️ Ejecución del proyecto
-
-1. Clonar el repositorio  
-2. Configurar la base de datos en `application.properties`  
-3. Ejecutar la aplicación desde la clase principal  
-4. Acceder a Swagger en el navegador  
-
----
-
-## 🗄️ Base de datos
-
-El sistema utiliza PostgreSQL.  
-Las tablas se generan automáticamente mediante JPA/Hibernate.
-
----
-
-## 📌 Notas
-
-- Se implementa arquitectura en capas  
-- Uso de DTOs para evitar exponer entidades directamente  
-- Uso de mappers para conversión de datos  
