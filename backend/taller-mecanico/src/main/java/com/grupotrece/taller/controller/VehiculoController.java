@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/vehiculos")
+@RequestMapping("/api/vehiculos")
 @CrossOrigin(origins = "http://localhost:5173")
 @Tag(name = "Vehículos", description = "Operaciones sobre vehículos")
 public class VehiculoController {
