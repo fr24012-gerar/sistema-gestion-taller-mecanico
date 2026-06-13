@@ -1,23 +1,23 @@
+import axios from "axios";
+
 const BASE_URL = "http://localhost:8080/api/auth";
 
 export const login = async (credentials) => {
+    try {
+        const response = await axios.post(
+            `${BASE_URL}/login`,
+            credentials,
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        );
 
-    const response = await fetch(`${BASE_URL}/login`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(credentials)
-    });
-
-    if (!response.ok) {
-
-        const errorText = await response.text();
-
+        return response.data;
+    } catch (error) {
         throw new Error(
-            errorText || "Credenciales incorrectas"
+            error.response?.data || "Credenciales incorrectas"
         );
     }
-
-    return await response.json();
 };

@@ -1,47 +1,63 @@
+import axios from "axios";
+
 const BASE_URL = "http://localhost:8080/api/clientes";
 
 // GET /api/clientes — listar todos
 export const listarClientes = async () => {
-  const res = await fetch(BASE_URL);
-  if (!res.ok) throw new Error("Error al listar clientes");
-  return res.json();
+  try {
+    const response = await axios.get(BASE_URL);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data || "Error al listar clientes"
+    );
+  }
 };
 
 // GET /api/clientes/{email} — buscar por email
 export const buscarPorEmail = async (email) => {
-  const res = await fetch(`${BASE_URL}/${email}`);
-  if (!res.ok) throw new Error("Cliente no encontrado");
-  return res.json();
+  try {
+    const response = await axios.get(`${BASE_URL}/${email}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data || "Cliente no encontrado"
+    );
+  }
 };
 
 // POST /api/clientes — crear nuevo cliente
 export const crearCliente = async (dto) => {
-  const res = await fetch(BASE_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(dto),
-  });
-  if (!res.ok) throw new Error("Error al crear cliente");
-  return res.json();
+  try {
+    const response = await axios.post(BASE_URL, dto);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data || "Error al crear cliente"
+    );
+  }
 };
 
 // PUT /api/clientes/{id} — actualizar cliente
 export const actualizarCliente = async (id, dto) => {
-  const res = await fetch(`${BASE_URL}/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(dto),
-  });
-  if (!res.ok) throw new Error("Error al actualizar cliente");
-  return res.json();
+  try {
+    const response = await axios.put(`${BASE_URL}/${id}`, dto);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data || "Error al actualizar cliente"
+    );
+  }
 };
 
 // DELETE /api/clientes/{id} — eliminar cliente
-// El controller devuelve ResponseEntity<String>, no JSON
 export const eliminarCliente = async (id) => {
-  const res = await fetch(`${BASE_URL}/${id}`, {
-    method: "DELETE",
-  });
-  if (!res.ok) throw new Error("Error al eliminar cliente");
-  return res.text(); // .text() porque el backend devuelve un String plano
+  try {
+    const response = await axios.delete(`${BASE_URL}/${id}`);
+    return response.data; // Si el backend devuelve String, aquí llegará ese String
+  } catch (error) {
+    throw new Error(
+      error.response?.data || "Error al eliminar cliente"
+    );
+  }
 };
