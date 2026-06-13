@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080/vehiculos";
+const BASE_URL = "http://localhost:8080/api/vehiculos";
 
 export const listarVehiculos  = async ()       => (await fetch(BASE_URL)).json();
 

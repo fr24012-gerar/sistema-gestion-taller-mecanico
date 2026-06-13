@@ -141,7 +141,9 @@ function Vehiculos() {
   return (
     <div style={{ 
       display: "flex", 
-      flexDirection: esTablet ? "column" : "row", // Sidebar arriba/oculto en pantallas chicas si aplica
+      flexDirection: esMovil ? "column" : "row", // Solo se hace columna en celulares muy chicos
+      maxWidth: "100vw",
+      overflowX: "hidden",
       minHeight: "100vh", 
       backgroundColor: "#0f0f0f", 
       color: "white", 

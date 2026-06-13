@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Vehicles from "./pages/Vehicles";
 import Clientes from "./pages/Clientes";
 import Login from "./pages/Login";
+import Reportes from "./pages/Reportes";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -52,6 +53,14 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <Vehicles />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/reportes"
+                    element={
+                        <ProtectedRoute>
+                            <Reportes />
                         </ProtectedRoute>
                     }
                 />

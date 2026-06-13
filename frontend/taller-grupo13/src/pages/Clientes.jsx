@@ -131,6 +131,8 @@ function Clientes() {
         .clientes-layout-container {
           display: flex;
           min-height: 100vh;
+          max-width: 100vw;
+          overflow-x: hidden;
           background-color: #0f0f0f;
           color: white;
           font-family: Arial, sans-serif;
@@ -140,6 +142,7 @@ function Clientes() {
           padding: 40px;
           max-width: 100%;
           box-sizing: border-box;
+          flex-direction: column;
         }
         .clientes-header-section {
           display: flex;
@@ -186,16 +189,17 @@ function Clientes() {
         }
         .clientes-table-header {
           display: grid;
-          grid-template-columns: 80px 2fr 1.5fr 2fr 100px;
+          grid-template-columns: 100px 2.5fr 1.5fr 2fr 120px;
           padding: 20px 22px;
           color: #b3b3b3;
           font-weight: bold;
           border-bottom: 1px solid rgba(255,255,255,0.08);
           font-size: 13px;
         }
+
         .clientes-table-row {
           display: grid;
-          grid-template-columns: 80px 2fr 1.5fr 2fr 100px;
+          grid-template-columns: 100px 2.5fr 1.5fr 2fr 120px;
           padding: 18px 22px;
           align-items: center;
           border-bottom: 1px solid rgba(255,255,255,0.06);
