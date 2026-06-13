@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-const BASE_URL = "http://localhost:8080/api/vehiculos";
-=======
 import axios from "axios";
->>>>>>> main
 
 const BASE_URL = "http://localhost:8080/api/vehiculos";
 
