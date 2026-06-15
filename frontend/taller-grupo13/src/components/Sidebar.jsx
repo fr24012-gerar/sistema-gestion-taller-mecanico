@@ -32,7 +32,7 @@ function Sidebar() {
     },
     {
       icon: <FaClipboardList />,
-      path: "/ordenes",
+      path: "/reportes",
     },
   ];
 

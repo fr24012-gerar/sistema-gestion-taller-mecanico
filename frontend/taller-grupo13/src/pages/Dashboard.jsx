@@ -5,7 +5,7 @@ import {
   FaClipboardList,
   FaCog,
   FaBars,
-   FaSignOutAlt
+  FaSignOutAlt
 } from "react-icons/fa";
 import Sidebar from "../components/Sidebar"
 
