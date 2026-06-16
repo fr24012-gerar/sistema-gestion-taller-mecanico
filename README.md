@@ -1,127 +1,235 @@
 # 🚗 Sistema de Gestión para Taller Mecánico
 
-Aplicación web desarrollada con Spring Boot para la administración de un taller mecánico.
-
-En esta etapa del proyecto se ha implementado la gestión de **clientes** y **vehículos**, incluyendo operaciones CRUD.
-
----
+Aplicación web desarrollada para la administración de un taller mecánico, implementando una arquitectura de n capas y una interfaz web moderna para la gestión de clientes y vehículos.
 
 ## 👥 Integrantes
 
-- Gerardo Adonay Flores Rodas - FR24012  
-- César Antonio Castro Aquino - CA07001  
-- Josué Stanley Ruiz Gaitán - RG24040  
-- Josué Fernando Mata Hernández - MH24055  
-- Gabriel Enrique López Alvarado - LA23024  
+* Gerardo Adonay Flores Rodas - FR24012
+* César Antonio Castro Aquino - CA07001
+* Josué Stanley Ruiz Gaitán - RG24040
+* Josué Fernando Mata Hernández - MH24055
+* Gabriel Enrique López Alvarado - LA23024
 
 ---
 
-## ⚙️ Tecnologías utilizadas
+# ⚙️ Tecnologías utilizadas
 
-### Backend
-- Java 21  
-- Spring Boot  
-- Spring Data JPA  
-- PostgreSQL  
-- Lombok  
-- Swagger (OpenAPI)  
+## Backend
 
-### Frontend
-- React  
-- Vite  
-- Bootstrap  
-- React Router DOM  
+* Java 21
+* Spring Boot
+* Spring Data JPA
+* Spring Web
+* PostgreSQL
+* Lombok
+* Swagger (OpenAPI)
 
----
+## Frontend
 
-## 🗂️ Arquitectura del proyecto
+* React
+* Vite
+* Bootstrap
+* React Router DOM
 
-El sistema está estructurado en capas:
+## Contenedorización
 
-- **controller** → Manejo de endpoints (API REST)  
-- **service** → Lógica de negocio  
-- **repository** → Acceso a base de datos  
-- **entity** → Entidades JPA  
-- **dto** → Transferencia de datos  
-- **mapper** → Conversión entre Entity y DTO  
+* Docker
+* Docker Compose
 
 ---
 
-## 🚀 Funcionalidades implementadas
+# 🏗️ Arquitectura del proyecto
 
-- CRUD de clientes  
-- CRUD de vehículos  
-- Relación entre cliente y vehículo  
-- Uso de DTOs y mappers  
-- Interfaz gráfica desarrollada con React + Vite  
-- Navegación entre vistas mediante React Router  
+El sistema está desarrollado siguiendo una arquitectura en n capas que facilita la escalabilidad, mantenibilidad y separación de responsabilidades.
 
----
+```
+Cliente (React)
+        │
+        ▼
+Controller (API REST)
+        │
+        ▼
+Service (Lógica de negocio)
+        │
+        ▼
+Repository (Acceso a datos)
+        │
+        ▼
+Entity (Persistencia JPA)
+        │
+        ▼
+PostgreSQL
+```
 
-## 🖥️ Interfaz de Usuario (Frontend)
+Además, el proyecto incorpora:
 
-La aplicación cuenta además con una interfaz web desarrollada con **React + Vite**.
-
-Una vez ejecutado el frontend, puedes acceder desde:
-
-👉 `http://localhost:5173/login`
-
-Desde esta interfaz se pueden gestionar clientes y vehículos mediante una experiencia visual e interactiva.
-
----
-
-## 🧪 Documentación API (Swagger)
-
-Una vez ejecutado el proyecto, puedes acceder a la documentación en:
-
-👉 `http://localhost:8080/swagger-ui/index.html`
-
-Desde ahí puedes probar todos los endpoints disponibles.
+* **DTOs** para la transferencia de datos.
+* **Mappers** para convertir entre entidades y DTOs.
+* Separación entre frontend y backend mediante una API REST.
 
 ---
 
-## ▶️ Ejecución del proyecto
+# 🚀 Funcionalidades implementadas
 
-### Backend
+## Gestión de clientes
 
-1. Clonar el repositorio  
-2. Configurar la base de datos en `application.properties`  
-3. Ejecutar la aplicación desde la clase principal  
-4. Acceder a Swagger en el navegador  
+* Registrar clientes.
+* Consultar clientes.
+* Actualizar información de clientes.
+* Eliminar clientes.
+* Búsqueda de clientes.
 
-### Frontend
+## Gestión de vehículos
 
-1. Entrar a la carpeta del frontend  
+* Registrar vehículos.
+* Consultar vehículos.
+* Actualizar vehículos.
+* Eliminar vehículos.
+* Búsqueda de vehículos.
 
-2. Instalar dependencias:
+## Características adicionales
+
+* Relación entre clientes y vehículos.
+* Navegación mediante menú lateral.
+* Componentes reutilizables.
+* Diseño responsivo utilizando Bootstrap.
+* Comunicación entre frontend y backend mediante API REST.
+
+---
+
+# 🖥️ Interfaz gráfica
+
+La aplicación incorpora una interfaz web desarrollada con **React + Vite**, diseñada para representar visualmente las operaciones implementadas en el backend.
+
+Entre sus principales características se encuentran:
+
+* Gestión completa (CRUD) de clientes.
+* Gestión completa (CRUD) de vehículos.
+* Búsqueda de registros.
+* Navegación entre módulos mediante un menú lateral.
+* Componentes reutilizables para facilitar el mantenimiento.
+* Adaptación a diferentes tamaños de pantalla mediante diseño responsivo.
+
+Una vez iniciado el proyecto, el frontend estará disponible en:
+
+```
+http://localhost:5173/login
+```
+
+---
+
+# 📚 Documentación de la API
+
+La documentación interactiva de los servicios REST se encuentra disponible mediante Swagger.
+
+Acceso:
+
+```
+http://localhost:8080/swagger-ui/index.html
+```
+
+Desde esta interfaz es posible probar todos los endpoints implementados.
+
+---
+
+# 🐳 Ejecución mediante Docker Compose
+
+El proyecto puede ejecutarse completamente utilizando Docker Compose, levantando automáticamente la base de datos PostgreSQL, el backend y el frontend.
+
+## Requisitos
+
+* Docker
+* Docker Compose
+
+## Levantar los servicios
+
+Desde la carpeta raíz del proyecto ejecutar:
+
+```bash
+docker compose up --build
+```
+
+Se crearán los siguientes contenedores:
+
+| Servicio            | Puerto |
+| ------------------- | ------ |
+| PostgreSQL          | 5433   |
+| Backend Spring Boot | 8080   |
+| Frontend React      | 5173   |
+
+La configuración utilizada es:
+
+* **Base de datos:** `taller_mecanico`
+* **Usuario:** `postgres`
+* **Contraseña:** `postgres`
+
+El backend se conecta automáticamente al contenedor de PostgreSQL mediante la red interna de Docker utilizando:
+
+```
+jdbc:postgresql://postgres:5432/taller_mecanico
+```
+
+---
+
+# ▶️ Ejecución manual
+
+## Backend
+
+1. Ingresar al proyecto backend.
+2. Configurar la conexión a PostgreSQL en `application.properties` o mediante variables de entorno.
+3. Ejecutar la aplicación desde la clase principal de Spring Boot.
+4. Acceder a Swagger desde el navegador.
+
+## Frontend
+
+Entrar a la carpeta del frontend:
+
+```bash
+cd frontend/taller-grupo13
+```
+
+Instalar dependencias:
 
 ```bash
 npm install
 ```
 
-3. Ejecutar la aplicación:
+Ejecutar la aplicación:
 
 ```bash
 npm run dev
 ```
 
-4. Abrir en el navegador:
+Abrir en el navegador:
 
-👉 `http://localhost:5173/login`
-
----
-
-## 🗄️ Base de datos
-
-El sistema utiliza PostgreSQL.  
-Las tablas se generan automáticamente mediante JPA/Hibernate.
+```
+http://localhost:5173/login
+```
 
 ---
 
-## 📌 Notas
+# 🗄️ Base de datos
 
-- Se implementa arquitectura en capas  
-- Uso de DTOs para evitar exponer entidades directamente  
-- Uso de mappers para conversión de datos  
-- Separación entre frontend y backend  
-- Frontend desarrollado como SPA utilizando React + Vite
+El sistema utiliza PostgreSQL como gestor de base de datos relacional.
+
+Las tablas son generadas automáticamente mediante JPA/Hibernate según las entidades definidas en el proyecto.
+
+Cuando se ejecuta con Docker Compose, la información se conserva utilizando un volumen persistente:
+
+```
+postgres_data
+```
+
+---
+
+# 📌 Características del proyecto
+
+* Arquitectura en n capas.
+* API REST desarrollada con Spring Boot.
+* Persistencia con Spring Data JPA y PostgreSQL.
+* Uso de DTOs para desacoplar la capa de presentación de las entidades.
+* Uso de mappers para la conversión entre entidades y DTOs.
+* Frontend SPA desarrollado con React + Vite.
+* Interfaz responsiva utilizando Bootstrap.
+* Separación completa entre frontend y backend.
+* Despliegue simplificado mediante Docker Compose.
